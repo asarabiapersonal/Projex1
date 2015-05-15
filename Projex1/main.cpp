@@ -2,19 +2,20 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <locale>
 using namespace std;
 
 vector<string> getWords(string fileName);
 vector<string> getCommonWords(vector<string> firstFile, vector<string> secondFile);
 bool wAlreadyStored(string wToCheck, vector<string> wCollection);
 void printVectorString(vector<string> toPrint);
+string stripWord(string word);
 
 
 int main()
 {
 	vector<string> wAllFirst = getWords("file1.txt");
 	vector<string> wAllSecond = getWords("file2.txt");
-
 	vector<string> wCombined = getCommonWords(wAllFirst, wAllFirst);
 	printVectorString(wCombined);
 
@@ -28,11 +29,13 @@ vector<string> getWords(string fileName){
 	size_t pos = 0;
 	string delimiter = " ";
 	vector<string> allTokens;
-	fstream textFile("fileName");
+	fstream textFile(fileName);
 	if (textFile.is_open()){
 		while (getline(textFile, line)){
 			while ((pos = line.find(delimiter)) != string::npos){
 				token = line.substr(0, pos);
+				//cout << token << endl;
+				stripWord(token);
 				allTokens.push_back(token);
 				line.erase(0, pos + delimiter.length());
 			}
@@ -72,4 +75,22 @@ void printVectorString(vector<string> toPrint){
 		cout << toPrint[w] << endl;
 	}
 	return;
+}
+
+
+string stripWord(string word){
+	string strippedWord;
+	locale loc;
+	for (int charPos = 0; charPos < word.length (); charPos++){
+		if (isalnum(word[charPos])){
+			strippedWord.push_back(word[charPos]);
+		}
+	}
+	if (strippedWord != ""){
+		return strippedWord;
+	}
+	else{
+		return word;
+	}
+
 }
